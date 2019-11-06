@@ -29,6 +29,29 @@ abstract class TestCase extends BaseTestCase
 ## Assertions
 This package adds several assertions helpful when writing [Http Tests](https://laravel.com/docs/5.8/http-tests).
 
-```assertActionUsesFormRequest(string $controller, string $method, string $form_request)```
-Verifies the _action_ for a given controller performs validation using the given form request. 
+```
+php
+assertActionUsesFormRequest(string $controller, string $method, string $form_request)
+```
 
+Verifies the _action_ for a given controller performs validation using the given form request.
+
+
+## Matchers
+```
+php
+LaravelMatchers::isModel(Model $model = null)
+```
+Matches an argument _is_ the same as `$model`. When called without `$model`, will match any argument of type `Illuminate\Database\Eloquent\Model`.
+
+```
+php
+LaravelMatchers::isCollection(Collection $collection = null)
+```
+Matches an argument _equals_ `$collection`. When called without `$collection`, will match any argument of type `Illuminate\Support\Collection`.
+
+```
+php
+LaravelMatchers::isEloquentCollection(Collection $collection = null)
+```
+Matches an argument _equals_ `$collection`. When called without `$collection`, will match any argument of type `\Illuminate\Database\Eloquent\Collection`.
