@@ -6,6 +6,22 @@ use PHPUnit\Framework\Assert;
 
 trait HttpTestAssertions
 {
+    public function assertRouteUsesFormRequest(string $routeName, string $formRequest) {
+		$controllerAction = collect(Route::getRoutes())->filter(function (\Illuminate\Routing\Route $route) use ($routeName) {
+			return $route->getName() == $routeName;
+		})->pluck('action.controller');
+
+		Assert::assertNotEmpty($controllerAction, "{$routeName} is not defined within the router.");
+
+		Assert::assertCount(1, $controllerAction, "{$routeName} returns multiple routes.");
+
+		$controllerAction = $controllerAction->first();
+
+		list($controller, $method) = explode('@', $controllerAction);
+
+		$this->assertActionUsesFormRequest($controller, $method, $formRequest);
+	}
+    
     public function assertActionUsesFormRequest(string $controller, string $method, string $form_request)
     {
         Assert::assertTrue(is_subclass_of($form_request, 'Illuminate\\Foundation\\Http\\FormRequest'), $form_request . ' is not a type of Form Request');
