@@ -2,6 +2,7 @@
 
 namespace JMac\Testing\Traits;
 
+use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Assert;
 
 trait HttpTestAssertions
