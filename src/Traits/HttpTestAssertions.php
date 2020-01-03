@@ -25,4 +25,18 @@ trait HttpTestAssertions
 
         Assert::assertTrue($actual, 'Action "' . $method . '" does not have validation using the "' . $form_request . '" Form Request.');
     }
+
+    public function assertActionUsesMiddleware($controller, $method, $middleware)
+    {
+        $router = resolve(\Illuminate\Routing\Router::class);
+        $route = $router->getRoutes()->getByAction($controller . '@' . $method);
+
+        Assert::assertNotNull($route, 'Unable to find route for controller action (' . $controller . '@' . $method . ')');
+
+        if (is_array($middleware)) {
+            Assert::assertSame([], array_diff($middleware, $route->gatherMiddleware()), 'Controller action does not use middleware (' . implode(', ', $middleware) . ')');
+        } else {
+            Assert::assertTrue(in_array($middleware, $route->gatherMiddleware()), 'Controller action does not use middleware (' . $middleware . ')');
+        }
+    }
 }
