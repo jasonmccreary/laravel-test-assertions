@@ -2,7 +2,7 @@
 A set of helpful assertions when testing Laravel applications.
 
 ## Requirements
-Your application must be running the latest LTS version (5.5) or higher and using [Laravel's testing harness](https://laravel.com/docsting).
+Your application must be running the latest LTS version (5.5) or higher and using [Laravel's testing harness](https://laravel.com/docs/testing).
 
 ## Installation
 You may install these assertions with Composer by running:
