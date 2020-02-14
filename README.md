@@ -36,6 +36,12 @@ assertActionUsesFormRequest(string $controller, string $method, string $form_req
 
 Verifies the _action_ for a given controller performs validation using the given form request.
 
+```php
+assertRouteUsesFormRequest(string $routeName, string $formRequest)
+```
+
+Verifies that the corresponding action/controller, for a given _route name_ performs the validation using the given form request.
+
 
 ```php
 assertActionUsesMiddleware(string $controller, string $method, string|array $middleware)
