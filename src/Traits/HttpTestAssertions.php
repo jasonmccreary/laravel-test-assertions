@@ -12,17 +12,14 @@ trait HttpTestAssertions
 			return $route->getName() == $routeName;
 		})->pluck('action.controller');
 
-		Assert::assertNotEmpty($controllerAction, "{$routeName} is not defined within the router.");
+		Assert::assertNotEmpty($controllerAction, 'Route "' . $routeName . '" is not defined.');
+		Assert::assertCount(1, $controllerAction, 'Route "' . $routeName . '" is defined multiple times, route names should be unique.');
 
-		Assert::assertCount(1, $controllerAction, "{$routeName} returns multiple routes.");
-
-		$controllerAction = $controllerAction->first();
-
-		list($controller, $method) = explode('@', $controllerAction);
+		[$controller, $method] = explode('@', $controllerAction->first());
 
 		$this->assertActionUsesFormRequest($controller, $method, $formRequest);
 	}
-    
+
     public function assertActionUsesFormRequest(string $controller, string $method, string $form_request)
     {
         Assert::assertTrue(is_subclass_of($form_request, 'Illuminate\\Foundation\\Http\\FormRequest'), $form_request . ' is not a type of Form Request');
