@@ -18,7 +18,11 @@ trait HttpTestAssertions
         PHPUnitAssert::assertNotEmpty($controllerAction, 'Route "' . $routeName . '" is not defined.');
         PHPUnitAssert::assertCount(1, $controllerAction, 'Route "' . $routeName . '" is defined multiple times, route names should be unique.');
 
-        [$controller, $method] = explode('@', $controllerAction->first());
+        $controller = $controllerAction->first();
+        $method = '__invoke';
+        if(strstr($controllerAction->first(), '@')) {
+            [$controller, $method] = explode('@', $controllerAction->first());
+        }
 
         $this->assertActionUsesFormRequest($controller, $method, $formRequest);
     }
