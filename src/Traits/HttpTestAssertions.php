@@ -2,8 +2,8 @@
 
 namespace JMac\Testing\Traits;
 
-use Illuminate\Foundation\Testing\Assert as LaravelAssert;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Testing\Assert as LaravelAssert;
 use PHPUnit\Framework\Assert as PHPUnitAssert;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
