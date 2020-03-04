@@ -2,7 +2,6 @@
 
 namespace JMac\Testing\Traits;
 
-use Illuminate\Foundation\Testing\Assert as LaravelAssert;
 use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Assert as PHPUnitAssert;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
@@ -68,7 +67,11 @@ trait HttpTestAssertions
 
     public function assertValidationRules(array $expected, array $actual)
     {
-        LaravelAssert::assertArraySubset($this->normalizeRules($expected), $this->normalizeRules($actual));
+        if (class_exists(\Illuminate\Testing\Assert::class)) {
+            \Illuminate\Testing\Assert::assertArraySubset($this->normalizeRules($expected), $this->normalizeRules($actual));
+        } else {
+            \Illuminate\Foundation\Testing\Assert::assertArraySubset($this->normalizeRules($expected), $this->normalizeRules($actual));
+        }
     }
 
     public function assertExactValidationRules(array $expected, array $actual)
