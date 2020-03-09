@@ -96,6 +96,21 @@ trait HttpTestAssertions
         }
     }
 
+    public function assertEventHasListener($event, $listener)
+    {
+        $events = [];
+
+        foreach ($this->app->getProviders(EventServiceProvider::class) as $provider) {
+            $providerEvents = array_merge_recursive(
+                $provider->shouldDiscoverEvents() ? $provider->discoverEvents() : [], $provider->listens()
+            );
+
+            $events = array_merge_recursive($events, $providerEvents);
+        }
+
+        PHPUnitAssert::assertContains($listener, $events[$event]);
+    }
+
     private function normalizeRules(array $rules)
     {
         return array_map([$this, 'expandRules'], $rules);
