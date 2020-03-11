@@ -62,7 +62,7 @@ trait HttpTestAssertions
 
     public function createFormRequest(string $form_request, array $data = [])
     {
-        return $form_request::createFromBase(SymfonyRequest::create("", 'POST', $data));
+        return $form_request::createFromBase(SymfonyRequest::create('', 'POST', $data));
     }
 
     public function assertValidationRules(array $expected, array $actual)
