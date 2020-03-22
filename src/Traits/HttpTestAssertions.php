@@ -19,7 +19,7 @@ trait HttpTestAssertions
 
         $controller = $controllerAction->first();
         $method = '__invoke';
-        if(strstr($controllerAction->first(), '@')) {
+        if (strstr($controllerAction->first(), '@')) {
             [$controller, $method] = explode('@', $controllerAction->first());
         }
 
@@ -46,12 +46,24 @@ trait HttpTestAssertions
         PHPUnitAssert::assertTrue($actual, 'Action "' . $method . '" does not have validation using the "' . $form_request . '" Form Request.');
     }
 
-    public function assertActionUsesMiddleware($controller, $method, $middleware)
+    public function assertActionUsesMiddleware($controller, $method, $middleware = null)
     {
         $router = resolve(\Illuminate\Routing\Router::class);
-        $route = $router->getRoutes()->getByAction($controller . '@' . $method);
 
-        PHPUnitAssert::assertNotNull($route, 'Unable to find route for controller action (' . $controller . '@' . $method . ')');
+        if (is_null($middleware)) {
+            $middleware = $method;
+            $method = '__invoke';
+        }
+
+        if ($method === '__invoke') {
+            $route = $router->getRoutes()->getByAction($controller);
+
+            PHPUnitAssert::assertNotNull($route, 'Unable to find route for invokable controller (' . $controller . ')');
+        } else {
+            $route = $router->getRoutes()->getByAction($controller . '@' . $method);
+
+            PHPUnitAssert::assertNotNull($route, 'Unable to find route for controller action (' . $controller . '@' . $method . ')');
+        }
 
         if (is_array($middleware)) {
             PHPUnitAssert::assertSame([], array_diff($middleware, $route->gatherMiddleware()), 'Controller action does not use middleware (' . implode(', ', $middleware) . ')');
