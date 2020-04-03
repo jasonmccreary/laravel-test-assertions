@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Assert as PHPUnitAssert;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
-trait HttpTestAssertions
+trait AdditionalAssertions
 {
     public function assertRouteUsesFormRequest(string $routeName, string $formRequest)
     {
