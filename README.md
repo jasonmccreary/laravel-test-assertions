@@ -98,4 +98,4 @@ This package also provides methods for quickly creating common objects used with
 createFormRequest(string $class, array $data = [])
 ```
 
-Creates an instance of the given [Form Request](https://laravel.com/docsidation#form-request-validation) class with the given request data.
+Creates an instance of the given [Form Request](https://laravel.com/docs/7.x/validation#form-request-validation) class with the given request data.
