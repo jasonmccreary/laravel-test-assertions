@@ -18,5 +18,12 @@
         "psr-4": {
             "JMac\\Testing\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JMac\\Testing\\AdditionalAssertionsServiceProvider"
+            ]
+        }
     }
 }
