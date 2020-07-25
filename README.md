@@ -51,7 +51,7 @@ Verifies the _action_ for a given controller uses the given middleware or set of
 
 
 ```php
-assertRouteUsesMiddleware(string $routeName, array $middlewares, bool $onlyThese)
+assertRouteUsesMiddleware(string $routeName, array $middlewares, bool $exact)
 ```
 
 Verifies the _route_ for a given route name uses the given middleware or set of middleware.
