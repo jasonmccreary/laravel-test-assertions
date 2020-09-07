@@ -40,7 +40,7 @@ trait AdditionalAssertions
         PHPUnitAssert::assertTrue($action->isPublic(), 'Action "' . $method . '" is not public, controller actions must be public.');
 
         $actual = collect($action->getParameters())->contains(function ($parameter) use ($form_request) {
-            return $parameter->getType() instanceof \ReflectionNamedType && $parameter->getType()->getName() === $form_request;
+            return $parameter->getType() instanceof \ReflectionNamedType && ($parameter->getType()->getName() === $form_request  ||  array_key_exists($parameter->getType()->getName(), class_implements($form_request)) );
         });
 
         PHPUnitAssert::assertTrue($actual, 'Action "' . $method . '" does not have validation using the "' . $form_request . '" Form Request.');
