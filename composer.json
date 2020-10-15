@@ -25,5 +25,8 @@
                 "JMac\\Testing\\AdditionalAssertionsServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.2"
     }
 }
