@@ -10,7 +10,7 @@ class AssertRouteUsesFormRequestTest extends TestCase
     /** @test */
     public function it_tests()
     {
-        Route::get('/', 'Dummy\DummyController@test');
+        Route::get('/', 'Tests\DummyController@test');
         $this->get('/')->assertSee('test response');
     }
 }
