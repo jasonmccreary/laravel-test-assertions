@@ -5,6 +5,8 @@ namespace Tests;
 use Illuminate\Support\Facades\Route;
 use JMac\Testing\Traits\AdditionalAssertions;
 use Orchestra\Testbench\TestCase;
+use Tests\Fixtures\DummyController;
+use Tests\Fixtures\DummyRequest;
 
 class AdditionalAssertionsTraitTest extends TestCase
 {
@@ -13,7 +15,7 @@ class AdditionalAssertionsTraitTest extends TestCase
     /** @test */
     public function asserting_a_route_uses_a_form_request_returns_as_expected()
     {
-        Route::get('/', 'Tests\DummyController@test')->name('test');
+        Route::get('/', 'Tests\Fixtures\DummyController@test')->name('test');
 
         $this->assertRouteUsesFormRequest('test', DummyRequest::class);
     }
