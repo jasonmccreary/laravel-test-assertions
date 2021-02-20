@@ -19,11 +19,19 @@
             "JMac\\Testing\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "JMac\\Testing\\AdditionalAssertionsServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.2"
     }
 }
