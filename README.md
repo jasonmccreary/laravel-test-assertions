@@ -77,6 +77,11 @@ assertValidationRuleContains($rule, string $class)
 
 Verifies the rule or rules contains an instance of the given [Rule](https://laravel.com/docs/validation#custom-validation-rules) class.
 
+```php
+assertNotSoftDeleted(Model $model)
+```
+
+Verifies the given model is not _soft deleted_, providing the inverse of [assertSoftDeleted](https://laravel.com/docs/database-testing#available-assertions).
 
 ## Matchers
 ```php
