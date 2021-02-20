@@ -179,7 +179,7 @@ trait AdditionalAssertions
         }
     }
 
-    public function assertModelNotSoftDeleted(Model $model)
+    public function assertNotSoftDeleted(Model $model)
     {
         return $this->assertDatabaseHas($model->getTable(), [
             $model->getKeyName() => $model->getKey(),
