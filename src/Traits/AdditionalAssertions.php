@@ -3,6 +3,7 @@
 namespace JMac\Testing\Traits;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Database\Eloquent\Model;
 use PHPUnit\Framework\Assert as PHPUnitAssert;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
@@ -178,6 +179,13 @@ trait AdditionalAssertions
         }
     }
 
+    public function assertNotSoftDeleted(Model $model)
+    {
+        return $this->assertDatabaseHas($model->getTable(), [
+            $model->getKeyName() => $model->getKey(),
+            'deleted_at' => null,
+        ]);
+    }
 
     private function normalizeRules(array $rules)
     {
