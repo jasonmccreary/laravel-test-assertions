@@ -77,12 +77,6 @@ assertValidationRuleContains($rule, string $class)
 
 Verifies the rule or rules contains an instance of the given [Rule](https://laravel.com/docs/validation#custom-validation-rules) class.
 
-```php
-assertNotSoftDeleted(Model $model)
-```
-
-Verifies the given model is not _soft deleted_, providing the inverse of [assertSoftDeleted](https://laravel.com/docs/database-testing#available-assertions).
-
 ## Matchers
 ```php
 LaravelMatchers::isModel(Model $model = null)
@@ -111,3 +105,8 @@ createFormRequest(string $class, array $data = [])
 ```
 
 Creates an instance of the given [Form Request](https://laravel.com/docs/7.x/validation#form-request-validation) class with the given request data.
+
+## Support Policy
+Starting with version 2, this package will only support the latest stable version of Laravel (currently Laravel 8). If you need to support older versions of Laravel, you may use version 1 or upgrade your application ([try using Shift](https://laravelshift.com)).
+
+This package still follows [semantic versioning](https://semver.org/). However, it does so with respect to its own code. Any breaking changes will increase its major version number. Otherwise, minor version number increases will contain new features. This includes changes for future versions of Laravel.
