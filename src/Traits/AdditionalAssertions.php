@@ -66,10 +66,13 @@ trait AdditionalAssertions
             PHPUnitAssert::assertNotNull($route, 'Unable to find route for controller action (' . $controller . '@' . $method . ')');
         }
 
+        $excludedMiddleware = $route->action['excluded_middleware'] ?? [];
+        $usedMiddlewares = array_diff($route->gatherMiddleware(), $excludedMiddleware);
+
         if (is_array($middleware)) {
-            PHPUnitAssert::assertSame([], array_diff($middleware, $route->gatherMiddleware()), 'Controller action does not use middleware (' . implode(', ', $middleware) . ')');
+            PHPUnitAssert::assertSame([], array_diff($middleware, $usedMiddlewares), 'Controller action does not use middleware (' . implode(', ', $middleware) . ')');
         } else {
-            PHPUnitAssert::assertTrue(in_array($middleware, $route->gatherMiddleware()), 'Controller action does not use middleware (' . $middleware . ')');
+            PHPUnitAssert::assertTrue(in_array($middleware, $usedMiddlewares), 'Controller action does not use middleware (' . $middleware . ')');
         }
     }
 
@@ -78,7 +81,9 @@ trait AdditionalAssertions
         $router = resolve(\Illuminate\Routing\Router::class);
 
         $route = $router->getRoutes()->getByName($routeName);
-        $usedMiddlewares = $route->gatherMiddleware();
+
+        $excludedMiddleware = $route->action['excluded_middleware'] ?? [];
+        $usedMiddlewares = array_diff($route->gatherMiddleware(), $excludedMiddleware);
 
         PHPUnitAssert::assertNotNull($route, "Unable to find route for name `$routeName`");
 
