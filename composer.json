@@ -13,7 +13,7 @@
         "php": ">=7.3|^8.0",
         "illuminate/testing": "^8.0|^9.0|^10.0",
         "mockery/mockery": "^1.4.2",
-        "phpunit/phpunit": "^9.3.3"
+        "phpunit/phpunit": "^9.3.3|^10.0"
     },
     "autoload": {
         "psr-4": {
