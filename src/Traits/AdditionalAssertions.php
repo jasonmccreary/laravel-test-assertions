@@ -82,13 +82,16 @@ trait AdditionalAssertions
 
         $route = $router->getRoutes()->getByName($routeName);
 
+        PHPUnitAssert::assertNotNull($route, "Unable to find route for name `$routeName`");
+
         $excludedMiddleware = $route->action['excluded_middleware'] ?? [];
         $usedMiddlewares = array_diff($route->gatherMiddleware(), $excludedMiddleware);
 
-        PHPUnitAssert::assertNotNull($route, "Unable to find route for name `$routeName`");
+        $unusedMiddlewares = array_diff($middlewares, $usedMiddlewares);
+
+        PHPUnitAssert::assertTrue(count($unusedMiddlewares) === 0, "Route `$routeName` does not use expected `" . implode(', ', $unusedMiddlewares) . "` middleware(s)");
 
         if ($exact) {
-            $unusedMiddlewares = array_diff($middlewares, $usedMiddlewares);
             $extraMiddlewares = array_diff($usedMiddlewares, $middlewares);
 
             $messages = [];
@@ -104,10 +107,6 @@ trait AdditionalAssertions
             $messages = implode(" and ", $messages);
 
             PHPUnitAssert::assertTrue(count($unusedMiddlewares) + count($extraMiddlewares) === 0, "Route `$routeName` " . $messages);
-        } else {
-            $unusedMiddlewares = array_diff($middlewares, $usedMiddlewares);
-
-            PHPUnitAssert::assertTrue(count($unusedMiddlewares) === 0, "Route `$routeName` does not use expected `" . implode(', ', $unusedMiddlewares) . "` middleware(s)");
         }
     }
 
