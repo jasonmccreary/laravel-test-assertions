@@ -4,6 +4,7 @@ namespace JMac\Testing;
 
 use Illuminate\Support\ServiceProvider;
 use JMac\Testing\Traits\AdditionalAssertions;
+use PHPUnit\Framework\Assert;
 
 class AdditionalAssertionsServiceProvider extends ServiceProvider
 {
@@ -14,6 +15,16 @@ class AdditionalAssertionsServiceProvider extends ServiceProvider
                 AdditionalAssertions::assertArrayStructure($structure, $this->json());
 
                 return $this;
+            });
+        }
+
+        if (! \Illuminate\Testing\TestResponse::hasMacro('assertViewHasNull')) {
+            \Illuminate\Testing\TestResponse::macro('assertViewHasNull', function (string $key) {
+                $this->assertViewHas($key, function ($value) use ($key) {
+                    Assert::assertNull($value, 'View data ['.$key.'] was not null.');
+
+                    return true;
+                });
             });
         }
     }
