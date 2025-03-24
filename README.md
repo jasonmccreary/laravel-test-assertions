@@ -27,7 +27,7 @@ abstract class TestCase extends BaseTestCase
 ```
 
 ## Assertions
-This package adds several assertions helpful when writing [Http Tests](https://laravel.com/docs/http-tests).
+This package adds several assertions helpful when writing [HTTP Tests](https://laravel.com/docs/http-tests).
 
 
 ```php
@@ -76,6 +76,14 @@ assertValidationRuleContains($rule, string $class)
 ```
 
 Verifies the rule or rules contains an instance of the given [Rule](https://laravel.com/docs/validation#custom-validation-rules) class.
+
+
+```php
+assertViewHasNull($key)
+```
+
+Verifies the view data `$key` has an explicit value of `null`. **Note**: is a `TestResponse` assertion. It must be called on the response of a view.
+
 
 ## Matchers
 ```php
