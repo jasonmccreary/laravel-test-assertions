@@ -9,7 +9,7 @@ class AdditionalAssertionsServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        if (!\Illuminate\Testing\TestResponse::hasMacro('assertJsonTypedStructure')) {
+        if (! \Illuminate\Testing\TestResponse::hasMacro('assertJsonTypedStructure')) {
             \Illuminate\Testing\TestResponse::macro('assertJsonTypedStructure', function (array $structure) {
                 AdditionalAssertions::assertArrayStructure($structure, $this->json());
 
@@ -18,5 +18,3 @@ class AdditionalAssertionsServiceProvider extends ServiceProvider
         }
     }
 }
-
-
