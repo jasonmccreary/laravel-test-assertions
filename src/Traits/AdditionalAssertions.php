@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 trait AdditionalAssertions
 {
-    public function assertRouteUsesFormRequest(string $routeName, string $formRequest)
+    public function assertRouteUsesFormRequest(string $routeName, string $formRequest): void
     {
         $controllerAction = collect(Route::getRoutes())->filter(function (\Illuminate\Routing\Route $route) use ($routeName) {
             return $route->getName() == $routeName;
@@ -26,7 +26,7 @@ trait AdditionalAssertions
         $this->assertActionUsesFormRequest($controller, $method, $formRequest);
     }
 
-    public function assertActionUsesFormRequest(string $controller, string $method, string $form_request)
+    public function assertActionUsesFormRequest(string $controller, string $method, string $form_request): void
     {
         PHPUnitAssert::assertTrue(is_subclass_of($form_request, 'Illuminate\\Foundation\\Http\\FormRequest'), $form_request.' is not a type of Form Request');
 
@@ -46,7 +46,7 @@ trait AdditionalAssertions
         PHPUnitAssert::assertTrue($actual, 'Action "'.$method.'" does not have validation using the "'.$form_request.'" Form Request.');
     }
 
-    public function assertActionUsesMiddleware($controller, $method, $middleware = null)
+    public function assertActionUsesMiddleware($controller, $method, $middleware = null): void
     {
         $router = resolve(\Illuminate\Routing\Router::class);
 
@@ -75,7 +75,7 @@ trait AdditionalAssertions
         }
     }
 
-    public function assertMiddlewareGroupUsesMiddleware(string $middlewareGroup, array $middlewares)
+    public function assertMiddlewareGroupUsesMiddleware(string $middlewareGroup, array $middlewares): void
     {
         $router = resolve(\Illuminate\Routing\Router::class);
 
@@ -88,7 +88,7 @@ trait AdditionalAssertions
         PHPUnitAssert::assertTrue(count($missingMiddlware) === 0, "Middlware Group `$middlewareGroup` does not use expected `".implode(', ', $missingMiddlware).'` middleware(s)');
     }
 
-    public function assertRouteUsesMiddleware(string $routeName, array $middlewares, bool $exact = false)
+    public function assertRouteUsesMiddleware(string $routeName, array $middlewares, bool $exact = false): void
     {
         $router = resolve(\Illuminate\Routing\Router::class);
 
@@ -127,17 +127,17 @@ trait AdditionalAssertions
         return $form_request::createFromBase(SymfonyRequest::create('', 'POST', $data));
     }
 
-    public function assertValidationRules(array $expected, array $actual)
+    public function assertValidationRules(array $expected, array $actual): void
     {
         \Illuminate\Testing\Assert::assertArraySubset($this->normalizeRules($expected), $this->normalizeRules($actual));
     }
 
-    public function assertExactValidationRules(array $expected, array $actual)
+    public function assertExactValidationRules(array $expected, array $actual): void
     {
         PHPUnitAssert::assertEquals($this->normalizeRules($expected), $this->normalizeRules($actual));
     }
 
-    public function assertValidationRuleContains($rule, string $class)
+    public function assertValidationRuleContains($rule, string $class): void
     {
         if (is_object($rule)) {
             PHPUnitAssert::assertInstanceOf($rule, $class);
