@@ -8,24 +8,6 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 trait AdditionalAssertions
 {
-    public function assertRouteUsesFormRequest(string $routeName, string $formRequest): void
-    {
-        $controllerAction = collect(Route::getRoutes())->filter(function (\Illuminate\Routing\Route $route) use ($routeName) {
-            return $route->getName() == $routeName;
-        })->pluck('action.controller');
-
-        PHPUnitAssert::assertNotEmpty($controllerAction, 'Route "'.$routeName.'" is not defined.');
-        PHPUnitAssert::assertCount(1, $controllerAction, 'Route "'.$routeName.'" is defined multiple times, route names should be unique.');
-
-        $controller = $controllerAction->first();
-        $method = '__invoke';
-        if (strstr($controllerAction->first(), '@')) {
-            [$controller, $method] = explode('@', $controllerAction->first());
-        }
-
-        $this->assertActionUsesFormRequest($controller, $method, $formRequest);
-    }
-
     public function assertActionUsesFormRequest(string $controller, string $method, string $form_request): void
     {
         PHPUnitAssert::assertTrue(is_subclass_of($form_request, 'Illuminate\\Foundation\\Http\\FormRequest'), $form_request.' is not a type of Form Request');
@@ -75,85 +57,6 @@ trait AdditionalAssertions
         }
     }
 
-    public function assertMiddlewareGroupUsesMiddleware(string $middlewareGroup, array $middlewares): void
-    {
-        $router = resolve(\Illuminate\Routing\Router::class);
-
-        $kernel = new \App\Http\Kernel(app(), $router);
-
-        $middlewareGroups = $kernel->getMiddlewareGroups();
-
-        $missingMiddlware = array_diff($middlewares, $middlewareGroups[$middlewareGroup]);
-
-        PHPUnitAssert::assertTrue(count($missingMiddlware) === 0, "Middlware Group `$middlewareGroup` does not use expected `".implode(', ', $missingMiddlware).'` middleware(s)');
-    }
-
-    public function assertRouteUsesMiddleware(string $routeName, array $middlewares, bool $exact = false): void
-    {
-        $router = resolve(\Illuminate\Routing\Router::class);
-
-        $route = $router->getRoutes()->getByName($routeName);
-
-        PHPUnitAssert::assertNotNull($route, "Unable to find route for name `$routeName`");
-
-        $excludedMiddleware = $route->action['excluded_middleware'] ?? [];
-        $usedMiddlewares = array_diff($route->gatherMiddleware(), $excludedMiddleware);
-
-        $unusedMiddlewares = array_diff($middlewares, $usedMiddlewares);
-
-        PHPUnitAssert::assertTrue(count($unusedMiddlewares) === 0, "Route `$routeName` does not use expected `".implode(', ', $unusedMiddlewares).'` middleware(s)');
-
-        if ($exact) {
-            $extraMiddlewares = array_diff($usedMiddlewares, $middlewares);
-
-            $messages = [];
-
-            if ($extraMiddlewares) {
-                $messages[] = 'uses unexpected `'.implode(', ', $extraMiddlewares).'` middlware(s)';
-            }
-
-            if ($unusedMiddlewares) {
-                $messages[] = "doesn't use expected `".implode(', ', $unusedMiddlewares).'` middlware(s)';
-            }
-
-            $messages = implode(' and ', $messages);
-
-            PHPUnitAssert::assertTrue(count($unusedMiddlewares) + count($extraMiddlewares) === 0, "Route `$routeName` ".$messages);
-        }
-    }
-
-    public function createFormRequest(string $form_request, array $data = [])
-    {
-        return $form_request::createFromBase(SymfonyRequest::create('', 'POST', $data));
-    }
-
-    public function assertValidationRules(array $expected, array $actual): void
-    {
-        \Illuminate\Testing\Assert::assertArraySubset($this->normalizeRules($expected), $this->normalizeRules($actual));
-    }
-
-    public function assertExactValidationRules(array $expected, array $actual): void
-    {
-        PHPUnitAssert::assertEquals($this->normalizeRules($expected), $this->normalizeRules($actual));
-    }
-
-    public function assertValidationRuleContains($rule, string $class): void
-    {
-        if (is_object($rule)) {
-            PHPUnitAssert::assertInstanceOf($rule, $class);
-
-            return;
-        }
-
-        $matches = array_filter($this->expandRules($rule), function ($rule) use ($class) {
-            return $rule instanceof $class;
-        });
-
-        if (empty($matches)) {
-            PHPUnitAssert::fail('Failed asserting rule contains '.$class);
-        }
-    }
-
     public static function assertArrayStructure(array $structure, array $actual)
     {
         foreach ($structure as $key => $type) {
@@ -191,13 +94,110 @@ trait AdditionalAssertions
         }
     }
 
-    private function normalizeRules(array $rules)
+    public function assertExactValidationRules(array $expected, array $actual): void
     {
-        return array_map([$this, 'expandRules'], $rules);
+        PHPUnitAssert::assertEquals($this->normalizeRules($expected), $this->normalizeRules($actual));
+    }
+
+    public function assertMiddlewareGroupUsesMiddleware(string $middlewareGroup, array $middlewares): void
+    {
+        $router = resolve(\Illuminate\Routing\Router::class);
+
+        $kernel = new \App\Http\Kernel(app(), $router);
+
+        $middlewareGroups = $kernel->getMiddlewareGroups();
+
+        $missingMiddlware = array_diff($middlewares, $middlewareGroups[$middlewareGroup]);
+
+        PHPUnitAssert::assertTrue(count($missingMiddlware) === 0, "Middlware Group `$middlewareGroup` does not use expected `".implode(', ', $missingMiddlware).'` middleware(s)');
+    }
+
+    public function assertRouteUsesFormRequest(string $routeName, string $formRequest): void
+    {
+        $controllerAction = collect(Route::getRoutes())->filter(function (\Illuminate\Routing\Route $route) use ($routeName) {
+            return $route->getName() == $routeName;
+        })->pluck('action.controller');
+
+        PHPUnitAssert::assertNotEmpty($controllerAction, 'Route "'.$routeName.'" is not defined.');
+        PHPUnitAssert::assertCount(1, $controllerAction, 'Route "'.$routeName.'" is defined multiple times, route names should be unique.');
+
+        $controller = $controllerAction->first();
+        $method = '__invoke';
+        if (strstr($controllerAction->first(), '@')) {
+            [$controller, $method] = explode('@', $controllerAction->first());
+        }
+
+        $this->assertActionUsesFormRequest($controller, $method, $formRequest);
+    }
+
+    public function assertRouteUsesMiddleware(string $routeName, array $middlewares, bool $exact = false): void
+    {
+        $router = resolve(\Illuminate\Routing\Router::class);
+
+        $route = $router->getRoutes()->getByName($routeName);
+
+        PHPUnitAssert::assertNotNull($route, "Unable to find route for name `$routeName`");
+
+        $excludedMiddleware = $route->action['excluded_middleware'] ?? [];
+        $usedMiddlewares = array_diff($route->gatherMiddleware(), $excludedMiddleware);
+
+        $unusedMiddlewares = array_diff($middlewares, $usedMiddlewares);
+
+        PHPUnitAssert::assertTrue(count($unusedMiddlewares) === 0, "Route `$routeName` does not use expected `".implode(', ', $unusedMiddlewares).'` middleware(s)');
+
+        if ($exact) {
+            $extraMiddlewares = array_diff($usedMiddlewares, $middlewares);
+
+            $messages = [];
+
+            if ($extraMiddlewares) {
+                $messages[] = 'uses unexpected `'.implode(', ', $extraMiddlewares).'` middlware(s)';
+            }
+
+            if ($unusedMiddlewares) {
+                $messages[] = "doesn't use expected `".implode(', ', $unusedMiddlewares).'` middlware(s)';
+            }
+
+            $messages = implode(' and ', $messages);
+
+            PHPUnitAssert::assertTrue(count($unusedMiddlewares) + count($extraMiddlewares) === 0, "Route `$routeName` ".$messages);
+        }
+    }
+
+    public function assertValidationRuleContains($rule, string $class): void
+    {
+        if (is_object($rule)) {
+            PHPUnitAssert::assertInstanceOf($rule, $class);
+
+            return;
+        }
+
+        $matches = array_filter($this->expandRules($rule), function ($rule) use ($class) {
+            return $rule instanceof $class;
+        });
+
+        if (empty($matches)) {
+            PHPUnitAssert::fail('Failed asserting rule contains '.$class);
+        }
+    }
+
+    public function assertValidationRules(array $expected, array $actual): void
+    {
+        \Illuminate\Testing\Assert::assertArraySubset($this->normalizeRules($expected), $this->normalizeRules($actual));
+    }
+
+    public function createFormRequest(string $form_request, array $data = [])
+    {
+        return $form_request::createFromBase(SymfonyRequest::create('', 'POST', $data));
     }
 
     private function expandRules($rule)
     {
         return is_string($rule) ? explode('|', $rule) : $rule;
+    }
+
+    private function normalizeRules(array $rules)
+    {
+        return array_map([$this, 'expandRules'], $rules);
     }
 }
