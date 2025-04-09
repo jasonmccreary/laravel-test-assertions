@@ -2,6 +2,9 @@
 
 namespace JMac\Testing\Traits;
 
+use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Assert as PHPUnitAssert;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
@@ -109,7 +112,14 @@ trait AdditionalAssertions
 
         $missingMiddlware = array_diff($middlewares, $middlewareGroups[$middlewareGroup]);
 
-        PHPUnitAssert::assertTrue(count($missingMiddlware) === 0, "Middlware Group `$middlewareGroup` does not use expected `".implode(', ', $missingMiddlware).'` middleware(s)');
+        PHPUnitAssert::assertTrue(count($missingMiddlware) === 0, "Middleware Group `$middlewareGroup` does not use expected `".implode(', ', $missingMiddlware).'` middleware(s)');
+    }
+
+    public function assertNow(CarbonInterface $datetime, ?CarbonInterface $now = null): void
+    {
+        $now ??= Carbon::now();
+
+        PHPUnitAssert::assertTrue($datetime->equalTo($now), 'Failed asserting that the current time ['.$datetime->toDateTimeString().'] is equal to now ['.$now->toDateTimeString().']');
     }
 
     public function assertRouteUsesFormRequest(string $routeName, string $formRequest): void
@@ -189,6 +199,21 @@ trait AdditionalAssertions
     public function createFormRequest(string $form_request, array $data = [])
     {
         return $form_request::createFromBase(SymfonyRequest::create('', 'POST', $data));
+    }
+
+    public function freezeNow($milliseconds = false): CarbonImmutable
+    {
+        $now = Carbon::now();
+
+        if (! $milliseconds) {
+            $now = $now->startOfSecond();
+        }
+
+        $now = $now->toImmutable();
+
+        Carbon::setTestNow($now);
+
+        return $now;
     }
 
     private function expandRules($rule)
