@@ -119,7 +119,7 @@ trait AdditionalAssertions
     {
         $now ??= Carbon::now();
 
-        PHPUnitAssert::assertTrue($datetime->equalTo($now), 'Failed asserting that the current time ['.$datetime->toDateTimeString().'] is equal to now ['.$now->toDateTimeString().']');
+        PHPUnitAssert::assertTrue($datetime->equalTo($now), 'Failed asserting the date time ['.$datetime->toDateTimeString().'] is equal to now ['.$now->toDateTimeString().']');
     }
 
     public function assertRouteUsesFormRequest(string $routeName, string $formRequest): void
