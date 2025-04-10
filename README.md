@@ -26,10 +26,10 @@ abstract class TestCase extends BaseTestCase
 }
 ```
 
-## Assertions
-This package adds several assertions helpful when writing [HTTP Tests](https://laravel.com/docs/http-tests).
+## Documentation
+This package adds several assertions, matchers, and helpers aimed at making testing within Laravel easier.
 
-
+### Assertions
 ```php
 assertActionUsesFormRequest(string $controller, string $method, string $form_request)
 ```
@@ -37,18 +37,16 @@ assertActionUsesFormRequest(string $controller, string $method, string $form_req
 Verifies the _action_ for a given controller performs validation using the given form request.
 
 ```php
-assertRouteUsesFormRequest(string $routeName, string $formRequest)
-```
-
-Verifies that the corresponding action/controller, for a given _route name_ performs the validation using the given form request.
-
-
-```php
 assertActionUsesMiddleware(string $controller, string $method, string|array $middleware)
 ```
 
 Verifies the _action_ for a given controller uses the given middleware or set of middleware.
 
+```php
+assertRouteUsesFormRequest(string $routeName, string $formRequest)
+```
+
+Verifies that the corresponding action/controller, for a given _route name_ performs the validation using the given form request.
 
 ```php
 assertRouteUsesMiddleware(string $routeName, array $middlewares, bool $exact)
@@ -84,8 +82,14 @@ assertViewHasNull($key)
 
 Verifies the view data `$key` has an explicit value of `null`. **Note**: is a `TestResponse` assertion. It must be called on the response of a view.
 
+```php
+assertNow(CarbonInterface $datetime, ?CarbonInterface $now = null)
+```
 
-## Matchers
+Verifies `$datetime` is equal to `$now`, precise to the second. `$now` defaults to `Carbon::now()` which can be faked with the `freezeNow()` [testing helper](freeze-now).
+
+
+### Matchers
 ```php
 LaravelMatchers::isModel(Model $model = null)
 ```
@@ -104,15 +108,19 @@ LaravelMatchers::isEloquentCollection(Collection $collection = null)
 Matches an argument _equals_ `$collection`. When called without `$collection`, will match any argument of type `\Illuminate\Database\Eloquent\Collection`.
 
 
-## Creation Methods
-This package also provides methods for quickly creating common objects used within Laravel application to use when testing.
-
-
+### Helpers
 ```php
 createFormRequest(string $class, array $data = [])
 ```
 
 Creates an instance of the given [Form Request](https://laravel.com/docs/7.x/validation#form-request-validation) class with the given request data.
+
+```php
+freezeNow(bool $subseconds = false)
+```
+
+Similar to Laravel's `freezeTime()` helper, but defaults with second precision and returns the frozen time. You may pass `true` to freeze with sub-second precision.
+
 
 ## Support Policy
 Starting with version 2, this package will only support the latest stable version of Laravel (currently Laravel 8). If you need to support older versions of Laravel, you may use version 1 or upgrade your application ([try using Shift](https://laravelshift.com)).

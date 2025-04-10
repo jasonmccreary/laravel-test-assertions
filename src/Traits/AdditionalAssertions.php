@@ -119,7 +119,7 @@ trait AdditionalAssertions
     {
         $now ??= Carbon::now();
 
-        PHPUnitAssert::assertTrue($datetime->equalTo($now), 'Failed asserting the date time ['.$datetime->toDateTimeString().'] is equal to now ['.$now->toDateTimeString().']');
+        PHPUnitAssert::assertTrue($datetime->equalTo($now), 'Failed asserting the date time ['.$datetime->toDateTimeString('microsecond').'] is equal to now ['.$now->toDateTimeString('microsecond').']');
     }
 
     public function assertRouteUsesFormRequest(string $routeName, string $formRequest): void
@@ -201,11 +201,11 @@ trait AdditionalAssertions
         return $form_request::createFromBase(SymfonyRequest::create('', 'POST', $data));
     }
 
-    public function freezeNow($milliseconds = false): CarbonImmutable
+    public function freezeNow($subseconds = false): CarbonImmutable
     {
         $now = Carbon::now();
 
-        if (! $milliseconds) {
+        if (! $subseconds) {
             $now = $now->startOfSecond();
         }
 
