@@ -11,6 +11,43 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 trait AdditionalAssertions
 {
+    public static function assertArrayStructure(array $structure, array $actual)
+    {
+        foreach ($structure as $key => $type) {
+            if (is_array($type) && $key === '*') {
+                PHPUnitAssert::assertIsArray($actual);
+
+                foreach ($actual as $data) {
+                    static::assertArrayStructure($structure['*'], $data);
+                }
+            } elseif (is_array($type) && array_key_exists($key, $structure)) {
+                if (is_array($structure[$key])) {
+                    static::assertArrayStructure($structure[$key], $actual[$key]);
+                }
+            } else {
+                switch ($type) {
+                    case 'string':
+                        PHPUnitAssert::assertIsString($actual[$key]);
+                        break;
+                    case 'integer':
+                        PHPUnitAssert::assertIsInt($actual[$key]);
+                        break;
+                    case 'number':
+                        PHPUnitAssert::assertIsNumeric($actual[$key]);
+                        break;
+                    case 'boolean':
+                        PHPUnitAssert::assertIsBool($actual[$key]);
+                        break;
+                    case 'array':
+                        PHPUnitAssert::assertIsArray($actual[$key]);
+                        break;
+                    default:
+                        PHPUnitAssert::fail('unexpected type: '.$type);
+                }
+            }
+        }
+    }
+
     public function assertActionUsesFormRequest(string $controller, string $method, string $form_request): void
     {
         PHPUnitAssert::assertTrue(is_subclass_of($form_request, 'Illuminate\\Foundation\\Http\\FormRequest'), $form_request.' is not a type of Form Request');
@@ -60,41 +97,22 @@ trait AdditionalAssertions
         }
     }
 
-    public static function assertArrayStructure(array $structure, array $actual)
+    public function assertAttribute($subject, string $class, ...$arguments): void
     {
-        foreach ($structure as $key => $type) {
-            if (is_array($type) && $key === '*') {
-                PHPUnitAssert::assertIsArray($actual);
+        $reflection = new \ReflectionClass($subject);
+        $attributes = $reflection->getAttributes($class);
 
-                foreach ($actual as $data) {
-                    static::assertArrayStructure($structure['*'], $data);
-                }
-            } elseif (is_array($type) && array_key_exists($key, $structure)) {
-                if (is_array($structure[$key])) {
-                    static::assertArrayStructure($structure[$key], $actual[$key]);
-                }
-            } else {
-                switch ($type) {
-                    case 'string':
-                        PHPUnitAssert::assertIsString($actual[$key]);
-                        break;
-                    case 'integer':
-                        PHPUnitAssert::assertIsInt($actual[$key]);
-                        break;
-                    case 'number':
-                        PHPUnitAssert::assertIsNumeric($actual[$key]);
-                        break;
-                    case 'boolean':
-                        PHPUnitAssert::assertIsBool($actual[$key]);
-                        break;
-                    case 'array':
-                        PHPUnitAssert::assertIsArray($actual[$key]);
-                        break;
-                    default:
-                        PHPUnitAssert::fail('unexpected type: '.$type);
-                }
-            }
+        if (! count($attributes)) {
+            PHPUnitAssert::fail('Attribute '.$class.' not found on '.$subject::class);
         }
+
+        if (! count($arguments)) {
+            return;
+        }
+
+        $properties = get_object_vars($attributes[0]->newInstance());
+
+        PHPUnitAssert::assertEquals($arguments, array_values($properties), 'Attribute arguments do not match attribute properties');
     }
 
     public function assertExactValidationRules(array $expected, array $actual): void
