@@ -106,6 +106,10 @@ trait AdditionalAssertions
             PHPUnitAssert::fail('Attribute '.$class.' not found on '.$subject::class);
         }
 
+        if (! count($arguments)) {
+            return;
+        }
+
         $properties = get_object_vars($attributes[0]->newInstance());
 
         PHPUnitAssert::assertEquals($arguments, array_values($properties), 'Attribute arguments do not match attribute properties');
