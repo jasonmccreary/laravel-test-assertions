@@ -6,7 +6,9 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
+use JMac\Testing\Comparators\ClosuresAreEqualComparator;
 use PHPUnit\Framework\Assert as PHPUnitAssert;
+use SebastianBergmann\Comparator\Factory as ComparatorFactory;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 trait AdditionalAssertions
@@ -117,7 +119,9 @@ trait AdditionalAssertions
 
     public function assertExactValidationRules(array $expected, array $actual): void
     {
-        PHPUnitAssert::assertEquals($this->normalizeRules($expected), $this->normalizeRules($actual));
+        $this->comparingClosuresLeniently(function () use ($expected, $actual) {
+            PHPUnitAssert::assertEquals($this->normalizeRules($expected), $this->normalizeRules($actual));
+        });
     }
 
     public function assertMiddlewareGroupUsesMiddleware(string $middlewareGroup, array $middlewares): void
@@ -232,6 +236,26 @@ trait AdditionalAssertions
         Carbon::setTestNow($now);
 
         return $now;
+    }
+
+    /**
+     * Run an assertion with any two closures considered equal.
+     *
+     * Registration is scoped to the assertion so the comparator never leaks into
+     * unrelated comparisons in the consuming test suite. PHPUnit's own
+     * TestCase::registerComparator() would hold for the rest of the test, which
+     * would silently make an unrelated assertEquals() on closures pass as well.
+     */
+    private function comparingClosuresLeniently(callable $assertion): void
+    {
+        $comparator = new ClosuresAreEqualComparator;
+        ComparatorFactory::getInstance()->register($comparator);
+
+        try {
+            $assertion();
+        } finally {
+            ComparatorFactory::getInstance()->unregister($comparator);
+        }
     }
 
     private function expandRules($rule)

@@ -68,6 +68,8 @@ assertExactValidationRules(array $expected, array $actual)
 
 Verifies the expected set of validation rules for fields exactly match a set of validation rules. Rules may be passed as a delimited string or array.
 
+**Note**: closures within a rule set are compared by presence and position, not by behavior. PHP offers no way to compare two closures functionally, so a closure in the expected rules only asserts that _some_ closure sits in that position. To cover what a closure does, extract it from `rules()` into a [`ValidationRule`](https://laravel.com/docs/validation#custom-validation-rules) class and test it separately.
+
 
 ```php
 assertValidationRuleContains($rule, string $class)
