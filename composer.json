@@ -26,5 +26,8 @@
                 "JMac\\Testing\\AdditionalAssertionsServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "jasonmccreary/double": "~0.10"
     }
 }
