@@ -199,7 +199,7 @@ trait AdditionalAssertions
     public function assertValidationRuleContains($rule, string $class): void
     {
         if (is_object($rule)) {
-            PHPUnitAssert::assertInstanceOf($rule, $class);
+            PHPUnitAssert::assertInstanceOf($class, $rule);
 
             return;
         }
