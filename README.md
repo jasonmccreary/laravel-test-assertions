@@ -43,6 +43,20 @@ assertActionUsesMiddleware(string $controller, string $method, string|array $mid
 Verifies the _action_ for a given controller uses the given middleware or set of middleware.
 
 ```php
+assertMiddlewareGroupUsesMiddleware(string $middlewareGroup, array $middlewares)
+```
+
+Verifies the given middleware group (e.g. `web`, `api`) of the application's HTTP kernel includes all the given middleware.
+
+```php
+$this->assertMiddlewareGroupUsesMiddleware('web', [
+    \Illuminate\Session\Middleware\StartSession::class,
+]);
+```
+
+**Note**: groups are read from the HTTP kernel bound to `Illuminate\Contracts\Http\Kernel`, which must provide `getMiddlewareGroups()` as Laravel's kernel does. This includes groups configured in `bootstrap/app.php`.
+
+```php
 assertRouteUsesFormRequest(string $routeName, string $formRequest)
 ```
 

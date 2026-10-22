@@ -126,9 +126,7 @@ trait AdditionalAssertions
 
     public function assertMiddlewareGroupUsesMiddleware(string $middlewareGroup, array $middlewares): void
     {
-        $router = resolve(\Illuminate\Routing\Router::class);
-
-        $kernel = new \App\Http\Kernel(app(), $router);
+        $kernel = resolve(\Illuminate\Contracts\Http\Kernel::class);
 
         $middlewareGroups = $kernel->getMiddlewareGroups();
 
