@@ -96,7 +96,7 @@ Verifies the rule or rules contains an instance of the given [Rule](https://lara
 assertViewHasNull($key)
 ```
 
-Verifies the view data `$key` has an explicit value of `null`. **Note**: is a `TestResponse` assertion. It must be called on the response of a view.
+Verifies the view data `$key` has an explicit value of `null`. **Note**: is a `TestResponse` assertion. It must be called on the response of a view. As with `assertViewHas`, a dotted key to a `null` Eloquent or `Fluent` attribute counts as missing; check it with `assertViewHas('user', fn ($user) => is_null($user->email))`.
 
 ```php
 assertNow(CarbonInterface $datetime, ?CarbonInterface $now = null)

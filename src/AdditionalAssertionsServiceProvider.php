@@ -20,6 +20,8 @@ class AdditionalAssertionsServiceProvider extends ServiceProvider
 
         if (! \Illuminate\Testing\TestResponse::hasMacro('assertViewHasNull')) {
             \Illuminate\Testing\TestResponse::macro('assertViewHasNull', function (string $key) {
+                $this->assertViewHas($key);
+
                 $this->assertViewHas($key, function ($value) use ($key) {
                     Assert::assertNull($value, 'View data ['.$key.'] was not null.');
 
